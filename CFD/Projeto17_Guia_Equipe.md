@@ -178,66 +178,59 @@ Uma fica parada no centro e oito representam movimento para os lados e diagonais
 
 ### Densidade
 
-\[
+$$
 \rho = \sum_{i=0}^{8} f_i
-\]
+$$
 
 A densidade é obtida somando as nove distribuições de uma célula.
-
 ---
 
 ### Velocidade do fluido
 
-\[
-\vec{u} =
-\frac{1}{\rho}
-\sum_i f_i \vec{e_i}
-\]
+$$
+\vec{u} = \frac{1}{\rho} \sum_i f_i \vec{e}_i
+$$
 
 O resultado deverá gerar duas componentes:
 
-```text
-ux = velocidade horizontal
-uy = velocidade vertical
-```
-
+- `ux` = velocidade horizontal;
+- `uy` = velocidade vertical.
 ---
 
-### Pesos D2Q9
+### Pesos do D2Q9
 
 Centro:
 
-\[
+```math
 w_0 = \frac{4}{9}
-\]
+```
 
 Direções horizontais e verticais:
 
-\[
+```math
 w_{1-4} = \frac{1}{9}
-\]
+```
 
 Diagonais:
 
-\[
+```math
 w_{5-8} = \frac{1}{36}
-\]
+```
 
 ---
 
 ### Distribuição de equilíbrio
 
-\[
-f_i^{eq}
-=
-w_i\rho
+```math
+f_i^{eq} =
+w_i \rho
 \left[
 1
-+3(\vec{e_i}\cdot\vec{u})
-+\frac{9}{2}(\vec{e_i}\cdot\vec{u})^2
--\frac{3}{2}|\vec{u}|^2
++ 3(\vec{e}_i \cdot \vec{u})
++ \frac{9}{2}(\vec{e}_i \cdot \vec{u})^2
+- \frac{3}{2}|\vec{u}|^2
 \right]
-\]
+```
 
 Pesquisar o significado de cada termo antes de implementar.
 
@@ -245,14 +238,12 @@ Pesquisar o significado de cada termo antes de implementar.
 
 ### Colisão
 
-\[
-f_i^*
-=
-f_i
--
+```math
+f_i^* =
+f_i -
 \frac{1}{\tau}
-(f_i-f_i^{eq})
-\]
+(f_i - f_i^{eq})
+```
 
 Essa etapa aproxima o fluido do estado de equilíbrio.
 
@@ -260,9 +251,9 @@ Essa etapa aproxima o fluido do estado de equilíbrio.
 
 ### Streaming
 
-\[
-f_i(x+e_i,t+1)=f_i^*(x,t)
-\]
+```math
+f_i(x + e_i, t + 1) = f_i^*(x,t)
+```
 
 Depois da colisão, cada distribuição avança para a célula vizinha correspondente à sua direção.
 
@@ -270,18 +261,15 @@ Depois da colisão, cada distribuição avança para a célula vizinha correspon
 
 ### Viscosidade em unidades de lattice
 
-\[
-\nu =
-\frac{\tau-0.5}{3}
-\]
+```math
+\nu = \frac{\tau - 0.5}{3}
+```
 
-ou:
+Ou:
 
-\[
+```math
 \tau = 0.5 + 3\nu
-\]
-
----
+```
 
 ## Bounce-back
 
@@ -368,9 +356,9 @@ Pesquisar:
 
 ### Velocidade resultante
 
-\[
+```math
 v = \sqrt{u_x^2 + u_y^2}
-\]
+```
 
 Essa fórmula transforma as duas componentes de velocidade em uma velocidade total.
 
@@ -378,29 +366,29 @@ Essa fórmula transforma as duas componentes de velocidade em uma velocidade tot
 
 ### Pressão no D2Q9
 
-\[
-p = c_s^2\rho
-\]
+```math
+p = c_s^2 \rho
+```
 
 Para o D2Q9:
 
-\[
+```math
 c_s^2 = \frac{1}{3}
-\]
+```
 
 Portanto:
 
-\[
+```math
 p = \frac{\rho}{3}
-\]
+```
 
 ---
 
 ### Número de Reynolds
 
-\[
-Re = \frac{UL}{\nu}
-\]
+```math
+Re = \frac{U L}{\nu}
+```
 
 Onde:
 
@@ -408,38 +396,31 @@ Onde:
 - `L` = comprimento característico do carrinho;
 - `ν` = viscosidade cinemática.
 
-Pesquisar o significado físico do número de Reynolds.
-
 ---
 
 ### Força de arrasto
 
-Quando for possível obter ou estimar o coeficiente de arrasto:
-
-\[
-F_d =
-\frac{1}{2}
-\rho U^2 A C_d
-\]
+```math
+F_d = \frac{1}{2} \rho U^2 A C_d
+```
 
 Onde:
 
-- `Fd` = força de arrasto;
+- `F_d` = força de arrasto;
 - `ρ` = densidade do ar;
-- `U` = velocidade;
+- `U` = velocidade do fluxo;
 - `A` = área de referência;
-- `Cd` = coeficiente de arrasto.
+- `C_d` = coeficiente de arrasto.
 
 ---
 
 ### Coeficiente de arrasto
 
-\[
+```math
 C_d =
 \frac{F_d}
-{\frac{1}{2}\rho U^2 A}
-\]
-
+{\frac{1}{2} \rho U^2 A}
+```
 A equipe deverá pesquisar qual método será usado para estimar `Fd` ou `Cd` a partir do CFD.
 
 ## O que programar
@@ -562,10 +543,9 @@ O ideal é receber do `metrics.py` os valores físicos já calculados.
 
 Para testes independentes, pode usar a magnitude:
 
-\[
+```math
 v = \sqrt{u_x^2 + u_y^2}
-\]
-
+```
 ---
 
 # 6. `main.py` — Integração
