@@ -18,9 +18,8 @@ import pytest
 from PIL import Image, ImageDraw, ImageFilter
 from scipy import ndimage
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-import geometry  # noqa: E402
-from geometry import criar_mascara  # noqa: E402
+from aerodinamica import geometry
+from aerodinamica.geometry import criar_mascara
 
 LARG, ALT = 900, 500
 OITO = np.ones((3, 3), dtype=bool)
@@ -477,12 +476,25 @@ def test_varias_resolucoes(basica, largura, altura, minimo):
     assert componentes(mask) == 1
 
 
-def test_resolucao_baixa_avisa_que_a_asa_fina_se_fragmentou(basica):
-    # 100x50: o carrinho tem ~40 células e a asa (4 px) fica com ~0,2 célula
-    caminho, v = basica
-    with pytest.warns(UserWarning, match="partes"):
+def test_asas_finas_em_baixa_resolucao(basica):
+    caminho, verdade = basica
+    with warnings.catch_warnings(record=True) as avisos:
+        warnings.simplefilter("always")
         mask = criar_mascara(caminho, 100, 50)
-    assert iou_forma(mask, v) >= 0.75                 # o corpo continua correto
+    assert iou_forma(mask, verdade) >= 0.75
+    # A redução atual pode conservar a asa. O aviso de fragmentação precisa
+    # corresponder ao que aconteceu à conectividade, em qualquer versão do OpenCV.
+    assert any("número de partes" in str(a.message) for a in avisos) == (componentes(mask) != 1)
+
+
+def test_avisa_quando_duas_partes_se_fundem(salvar):
+    im = Image.new("RGBA", (200, 100), (0, 0, 0, 0))
+    desenho = ImageDraw.Draw(im)
+    for caixa in [(20, 30, 79, 65), (85, 30, 144, 65)]:
+        desenho.rectangle(caixa, fill=(20, 20, 20, 255))
+    with pytest.warns(UserWarning, match="número de partes"):
+        mask = criar_mascara(salvar(im), 24, 20)
+    assert componentes(mask) == 1
 
 
 def test_resolucao_minima_funciona_e_avisa(basica):

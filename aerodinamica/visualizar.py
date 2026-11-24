@@ -11,7 +11,7 @@ Convenções (iguais às do restante do projeto):
     - mask é booleana: True = carrinho, False = ar.
 
 Uso a partir do main.py:
-    import visualization as viz
+    from aerodinamica import visualizar as viz
     viz.gerar_todos_os_graficos(rho, ux, uy, mask, pasta_saida="resultados")
 """
 
@@ -163,7 +163,7 @@ def mostrar_silhueta(mask, salvar_em=None):
 # ============================================================
 
 def mostrar_velocidade(ux, uy, mask, velocidade=None, com_linhas=True,
-                       com_esteira=True, salvar_em=None):
+                       com_esteira=True, salvar_em=None, unidade="unid. de lattice"):
     """
     Mapa de cores da velocidade resultante, com linhas de corrente por cima.
 
@@ -181,7 +181,7 @@ def mostrar_velocidade(ux, uy, mask, velocidade=None, com_linhas=True,
         cmap=_cmap_com_carro("viridis"),
         interpolation="nearest",
     )
-    fig.colorbar(imagem, ax=ax, label="Velocidade (unid. de lattice)", shrink=0.85)
+    fig.colorbar(imagem, ax=ax, label=f"Velocidade ({unidade})", shrink=0.85)
 
     if com_linhas:
         X, Y = _grade(mask)
@@ -203,7 +203,7 @@ def mostrar_velocidade(ux, uy, mask, velocidade=None, com_linhas=True,
 # 3) CAMPO DE PRESSÃO
 # ============================================================
 
-def mostrar_pressao(rho, mask, pressao=None, relativa=True, salvar_em=None):
+def mostrar_pressao(rho, mask, pressao=None, relativa=True, salvar_em=None, unidade="unid. de lattice"):
     """
     Mapa de pressão.
 
@@ -226,12 +226,12 @@ def mostrar_pressao(rho, mask, pressao=None, relativa=True, salvar_em=None):
         limite = limite if limite > 0 else 1.0
         cmap = _cmap_com_carro("coolwarm")
         kwargs = dict(vmin=-limite, vmax=limite)
-        rotulo = "Pressão − pressão média (unid. de lattice)"
+        rotulo = f"Pressão − pressão média ({unidade})"
     else:
         campo = pressao
         cmap = _cmap_com_carro("plasma")
         kwargs = {}
-        rotulo = "Pressão (unid. de lattice)"
+        rotulo = f"Pressão ({unidade})"
 
     fig, ax = plt.subplots(figsize=(11, 5))
     imagem = ax.imshow(
@@ -247,7 +247,7 @@ def mostrar_pressao(rho, mask, pressao=None, relativa=True, salvar_em=None):
 # 4) LINHAS DE FLUXO (LINHAS DE CORRENTE)
 # ============================================================
 
-def mostrar_linhas_fluxo(ux, uy, mask, velocidade=None, densidade=2.0, salvar_em=None):
+def mostrar_linhas_fluxo(ux, uy, mask, velocidade=None, densidade=2.0, salvar_em=None, unidade="unid. de lattice"):
     """Linhas de corrente coloridas pela velocidade local."""
     mask = _preparar_mascara(mask)
     if velocidade is None:
@@ -269,7 +269,7 @@ def mostrar_linhas_fluxo(ux, uy, mask, velocidade=None, densidade=2.0, salvar_em
         linewidth=1.0,
         arrowsize=0.9,
     )
-    fig.colorbar(linhas.lines, ax=ax, label="Velocidade (unid. de lattice)", shrink=0.85)
+    fig.colorbar(linhas.lines, ax=ax, label=f"Velocidade ({unidade})", shrink=0.85)
     _desenhar_contorno_carro(ax, mask, cor="red")
 
     ax.set_xlim(-0.5, mask.shape[1] - 0.5)
@@ -282,7 +282,7 @@ def mostrar_linhas_fluxo(ux, uy, mask, velocidade=None, densidade=2.0, salvar_em
 # 5) VETORES DE VELOCIDADE
 # ============================================================
 
-def mostrar_vetores(ux, uy, mask, velocidade=None, passo=None, salvar_em=None):
+def mostrar_vetores(ux, uy, mask, velocidade=None, passo=None, salvar_em=None, unidade="unid. de lattice"):
     """
     Campo vetorial (quiver) com setas coloridas pela velocidade.
 
@@ -317,7 +317,7 @@ def mostrar_vetores(ux, uy, mask, velocidade=None, passo=None, salvar_em=None):
         scale_units="xy",
         scale=None,
     )
-    fig.colorbar(setas, ax=ax, label="Velocidade (unid. de lattice)", shrink=0.85)
+    fig.colorbar(setas, ax=ax, label=f"Velocidade ({unidade})", shrink=0.85)
     _desenhar_contorno_carro(ax, mask, cor="red")
 
     ax.set_xlim(-0.5, nx - 0.5)

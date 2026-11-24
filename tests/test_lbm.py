@@ -1,13 +1,9 @@
 # Testes do LBM.py. Rodar com:  pytest tests/ -v
 
-import os
-import sys
-
 import numpy as np
 import pytest
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-import LBM  # noqa: E402
+from aerodinamica import lbm as LBM
 
 
 def test_pesos_e_direcoes():

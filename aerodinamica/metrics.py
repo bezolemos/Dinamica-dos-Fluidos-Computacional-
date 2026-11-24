@@ -9,7 +9,7 @@
 # mask True = carrinho.
 #
 # Uso:
-#   import metrics
+#   from aerodinamica import metrics
 #   res = metrics.calcular_metricas(rho, ux, uy, mask, u_entrada=0.05, tau=0.6)
 #   metrics.imprimir_metricas(res)
 #
@@ -223,7 +223,7 @@ def calcular_metricas(rho, ux, uy, mask, u_entrada, tau, metodo="volume_controle
         raise ValueError("rho, ux, uy e mask tem que ter o mesmo tamanho")
     if not mask.any():
         raise ValueError("a mascara esta vazia, nao tem carrinho")
-    if not np.isfinite(rho[~mask]).all() or not np.isfinite(ux[~mask]).all():
+    if not all(np.isfinite(campo[~mask]).all() for campo in (rho, ux, uy)):
         raise ValueError("tem NaN no resultado, a simulacao divergiu")
     if metodo not in ("volume_controle", "superficie"):
         raise ValueError(f"metodo desconhecido: {metodo}")
@@ -371,7 +371,7 @@ if __name__ == "__main__":
     # teste rapido: roda o solver em dois carrinhos de retangulos e compara.
     # O Cd sai alto (~6) porque a malha e pequena: o carrinho ocupa quase 30%
     # da altura do tunel e o Reynolds e baixo. Com a malha de verdade cai bastante.
-    import LBM
+    from aerodinamica import lbm
 
     ny, nx = 60, 180
     U, tau = 0.08, 0.8
@@ -388,7 +388,7 @@ if __name__ == "__main__":
     resultados = []
     for nome, mask in (("carro 1", carro1), ("carro 2", carro2)):
         print("simulando", nome)
-        rho, ux, uy = LBM.simular(mask, u_entrada=U, tau=tau, iteracoes=10000, mostrar_progresso=False)
+        rho, ux, uy = lbm.simular(mask, u_entrada=U, tau=tau, iteracoes=10000, mostrar_progresso=False)
         resultados.append(calcular_metricas(rho, ux, uy, mask, u_entrada=U, tau=tau))
 
     real = converter_para_real(resultados[0], comprimento_m=0.30, velocidade_ms=2.0, largura_m=0.10)

@@ -6,8 +6,8 @@ que o solver consegue usar.
 
 Uso rápido
 ----------
-    python geometry.py                 # abre o explorador de arquivos
-    python geometry.py imagem.png      # usa o caminho informado
+    python -m aerodinamica.geometry                 # abre o explorador de arquivos
+    python -m aerodinamica.geometry imagem.png      # usa o caminho informado
 
 Contrato com o restante do projeto
 ----------------------------------
@@ -16,7 +16,7 @@ Saída   : `mask`, np.ndarray de bool com shape (altura, largura)
               True  -> célula SÓLIDA (carrinho)
               False -> célula de FLUIDO (ar)
 
-Convenção de eixos (a confirmar com o solver_lbm.py):
+Convenção de eixos compartilhada com aerodinamica/lbm.py:
     mask[j, i]: j = linha = eixo y, com j = 0 no TOPO da imagem;
                 i = coluna = eixo x, crescendo para a direita.
     O carrinho é colocado como aparece na imagem. Se ele estiver virado
@@ -1031,8 +1031,7 @@ def criar_mascara(
         if sum(bordas) >= 3 or caixa_cobre > 0.85:
             warnings.warn(
                 "A máscara toca várias bordas da imagem: o fundo provavelmente tem muitos "
-                "objetos e foi confundido com o carrinho. Use a seleção guiada "
-                "(roi=..., ou 'python geometry.py --selecionar') para apontar o carrinho.")
+                "objetos e foi confundido com o carrinho. Na janela, arraste uma caixa em volta do carrinho na foto e repita o ensaio.")
 
     # --- 3. recorta e redimensiona sem distorcer ----------------------
     ys, xs = np.nonzero(mask_img)
@@ -1463,9 +1462,9 @@ def mostrar_previa(imagem, titulo="Máscara do carrinho"):
 
 
 # -------------------------------------------------------------------
-# Execução:  python geometry.py              (explorador + janela de seleção)
-#            python geometry.py imagem.png   (detecção automática)
-#            python geometry.py imagem.png --selecionar   (com a janela)
+# Execução:  python -m aerodinamica.geometry              (explorador + janela de seleção)
+#            python -m aerodinamica.geometry imagem.png   (detecção automática)
+#            python -m aerodinamica.geometry imagem.png --selecionar   (com a janela)
 # -------------------------------------------------------------------
 
 def main(argv=None):

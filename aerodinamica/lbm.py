@@ -13,8 +13,8 @@
 # dizer descendo na imagem (linha aumentando).
 #
 # Uso:
-#   import LBM
-#   rho, ux, uy = LBM.simular(mask, u_entrada=0.05, tau=0.6, iteracoes=10000)
+#   from aerodinamica import lbm
+#   rho, ux, uy = lbm.simular(mask, u_entrada=0.05, tau=0.6, iteracoes=10000)
 
 import time
 
@@ -85,10 +85,11 @@ def bounce_back(f, f_colisao, celulas):
 
 
 def simular(mask, u_entrada=0.05, tau=0.6, iteracoes=10000, viscosidade=None,
-            tolerancia=1e-5, intervalo=200, mostrar_progresso=True):
+            tolerancia=1e-5, intervalo=200, mostrar_progresso=True, ao_verificar=None):
     """
     Roda o LBM e devolve (rho, ux, uy).
 
+    ao_verificar: função opcional (iteração, variação) para a janela comunicar convergência.
     mask:        matriz bool (ny, nx), True = carrinho
     u_entrada:   velocidade do vento em unidades de lattice (0.02 a 0.1 e o ideal)
     tau:         tempo de relaxamento (> 0.5). Se passar a viscosidade, o tau sai dela
@@ -144,6 +145,8 @@ def simular(mask, u_entrada=0.05, tau=0.6, iteracoes=10000, viscosidade=None,
                                    "aumente o tau ou diminua o u_entrada")
             variacao = np.abs(ux - ux_antes)[~mask].max() / u_entrada
             ux_antes = ux.copy()
+            if ao_verificar is not None:
+                ao_verificar(it, float(variacao))
             if mostrar_progresso:
                 print(f"iteracao {it:6d} | variacao {variacao:.2e} | {time.time() - inicio:.0f} s")
             if variacao < tolerancia:
